@@ -13,8 +13,8 @@ import 'package:kachat/main.dart';
 void main() {
   testWidgets('Tencent Chat smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MaterialApp(home: TencentChatTestApp()));
+    await tester.pumpWidget(const MaterialApp(home: TencentLoginScreen()));
 
-    expect(find.text('Tencent IM Standalone Test'), findsOneWidget);
+    expect(find.text('KatsKlub Chat'), findsOneWidget);
   });
 }
