@@ -1,6 +1,9 @@
 import "dart:convert";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
+import "package:tencent_cloud_chat_sdk/enum/log_level_enum.dart";
+import "package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart";
+import "package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart";
 import "package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart";
 
 const int sdkAppId = 20046974;
@@ -35,7 +38,8 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
   Future<void> _initTUIKit() async {
     await TIMUIKitCore.getInstance().init(
       sdkAppID: sdkAppId,
-      language: LanguageEnum.en,
+      loglevel: LogLevelEnum.V2TIM_LOG_DEBUG,
+      listener: V2TimSDKListener(),
       onTUIKitCallbackListener: (dynamic callback) {},
     );
   }
