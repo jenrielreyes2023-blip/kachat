@@ -2,8 +2,8 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
 import "package:tencent_cloud_chat_sdk/models/v2_tim_message.dart";
-import "package:tencent_cloud_chat_sdk/models/v2_tim_sdk_listener.dart";
-import "package:tencent_cloud_chat_sdk/models/v2_tim_advanced_msg_listener.dart";
+import "package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart";
+import "package:tencent_cloud_chat_sdk/enum/V2TimAdvancedMsgListener.dart";
 import "package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart";
 import "package:tencent_cloud_chat_sdk/enum/log_level_enum.dart";
 
@@ -116,16 +116,27 @@ class _TencentChatTestAppState extends State<TencentChatTestApp> {
     if (targetUser.isEmpty || text.isEmpty) return;
 
     _addLog("Sending to $targetUser: $text");
-    final sendRes = await TencentImSDKPlugin.v2TIMManager.sendC2CTextMessage(
-      text: text,
-      userID: targetUser,
-    );
+    final createRes = await TencentImSDKPlugin.v2TIMManager
+        .getMessageManager()
+        .createTextMessage(text: text);
 
-    if (sendRes.code == 0) {
-      _addLog("Message sent!");
-      _messageController.clear();
+    if (createRes.code == 0 && createRes.data?.messageInfo != null) {
+      final sendRes = await TencentImSDKPlugin.v2TIMManager
+          .getMessageManager()
+          .sendMessage(
+            message: createRes.data!.messageInfo,
+            receiver: targetUser,
+            groupID: "",
+          );
+
+      if (sendRes.code == 0) {
+        _addLog("Message sent!");
+        _messageController.clear();
+      } else {
+        _addLog("Send failed: ${sendRes.desc}");
+      }
     } else {
-      _addLog("Send failed: ${sendRes.desc}");
+      _addLog("Failed to create message: ${createRes.desc}");
     }
   }
 
