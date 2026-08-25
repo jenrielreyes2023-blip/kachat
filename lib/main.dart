@@ -1,223 +1,220 @@
 import "dart:convert";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
-import "package:tencent_cloud_chat_sdk/models/v2_tim_message.dart";
-import "package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart";
-import "package:tencent_cloud_chat_sdk/enum/V2TimAdvancedMsgListener.dart";
-import "package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart";
-import "package:tencent_cloud_chat_sdk/enum/log_level_enum.dart";
+import "package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart";
+
+const int sdkAppId = 20046974;
+const String tokenApiUrl = "https://katsklub.top/api/chat/token";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MaterialApp(home: TencentChatTestApp()));
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: TencentLoginScreen(),
+  ));
 }
 
-class TencentChatTestApp extends StatefulWidget {
-  const TencentChatTestApp({super.key});
+class TencentLoginScreen extends StatefulWidget {
+  const TencentLoginScreen({super.key});
 
   @override
-  State<TencentChatTestApp> createState() => _TencentChatTestAppState();
+  State<TencentLoginScreen> createState() => _TencentLoginScreenState();
 }
 
-class _TencentChatTestAppState extends State<TencentChatTestApp> {
-  final String backendUrl = "https://katsklub.top/api/chat/token";
-  final int sdkAppId = 20046974;
-
-  final TextEditingController _myUserIdController = TextEditingController();
-  final TextEditingController _targetUserIdController = TextEditingController();
-  final TextEditingController _messageController = TextEditingController();
-
-  bool isSdkInited = false;
-  bool isLoggedIn = false;
-  List<String> logs = [];
+class _TencentLoginScreenState extends State<TencentLoginScreen> {
+  final TextEditingController _idController = TextEditingController();
+  bool _loading = false;
+  String _status = "Ready";
 
   @override
   void initState() {
     super.initState();
-    _initTencentSdk();
+    _initTUIKit();
   }
 
-  void _addLog(String log) {
-    setState(() {
-      logs.insert(0, log);
-    });
-  }
-
-  Future<void> _initTencentSdk() async {
-    final res = await TencentImSDKPlugin.v2TIMManager.initSDK(
+  Future<void> _initTUIKit() async {
+    await TIMUIKitCore.getInstance().init(
       sdkAppID: sdkAppId,
-      loglevel: LogLevelEnum.V2TIM_LOG_DEBUG,
-      listener: V2TimSDKListener(
-        onConnectSuccess: () => _addLog("Connected to Tencent server!"),
-        onConnectFailed: (code, desc) => _addLog("Connect failed: $code - $desc"),
-        onKickedOffline: () => _addLog("Kicked offline!"),
-      ),
+      language: LanguageEnum.en,
+      onTUIKitCallbackListener: (dynamic callback) {},
     );
-
-    if (res.code == 0) {
-      TencentImSDKPlugin.v2TIMManager
-          .getMessageManager()
-          .addAdvancedMsgListener(
-            listener: V2TimAdvancedMsgListener(
-              onRecvNewMessage: (V2TimMessage msg) {
-                final sender = msg.sender ?? "Unknown";
-                final text = msg.textElem?.text ?? "";
-                _addLog("Received from $sender: $text");
-              },
-            ),
-          );
-
-      setState(() => isSdkInited = true);
-      _addLog("SDK Initialized successfully.");
-    } else {
-      _addLog("Failed to init SDK: ${res.desc}");
-    }
   }
 
   Future<void> _login() async {
-    final userId = _myUserIdController.text.trim();
+    final userId = _idController.text.trim();
     if (userId.isEmpty) return;
 
-    _addLog("Fetching token for $userId...");
+    setState(() {
+      _loading = true;
+      _status = "Fetching token...";
+    });
+
     try {
-      final response = await http.post(
-        Uri.parse(backendUrl),
+      final res = await http.post(
+        Uri.parse(tokenApiUrl),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"userId": userId}),
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final userSig = data["userSig"];
+      final data = jsonDecode(res.body);
+      if (data["success"] == true) {
+        final userSig = data["userSig"] as String;
+        setState(() => _status = "Logging in to TUIKit...");
 
-        _addLog("Logging in to Tencent Cloud...");
-        final loginRes = await TencentImSDKPlugin.v2TIMManager.login(
+        final loginRes = await TIMUIKitCore.getInstance().login(
           userID: userId,
           userSig: userSig,
         );
 
-        if (loginRes.code == 0) {
-          setState(() => isLoggedIn = true);
-          _addLog("Logged in successfully as $userId!");
+        if (loginRes.code == 0 && mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ConversationListScreen(currentUserId: userId),
+            ),
+          );
         } else {
-          _addLog("Login failed: ${loginRes.desc}");
+          setState(() => _status = "Login failed: ${loginRes.desc}");
         }
       } else {
-        _addLog("Backend error: ${response.statusCode} - ${response.body}");
+        setState(() => _status = "API Error: ${data["error"]}");
       }
     } catch (e) {
-      _addLog("Error connecting to backend: $e");
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final targetUser = _targetUserIdController.text.trim();
-    final text = _messageController.text.trim();
-    if (targetUser.isEmpty || text.isEmpty) return;
-
-    _addLog("Sending to $targetUser: $text");
-    final createRes = await TencentImSDKPlugin.v2TIMManager
-        .getMessageManager()
-        .createTextMessage(text: text);
-
-    if (createRes.code == 0 && createRes.data?.messageInfo != null) {
-      final sendRes = await TencentImSDKPlugin.v2TIMManager
-          .getMessageManager()
-          .sendMessage(
-            message: createRes.data!.messageInfo,
-            receiver: targetUser,
-            groupID: "",
-          );
-
-      if (sendRes.code == 0) {
-        _addLog("Message sent!");
-        _messageController.clear();
-      } else {
-        _addLog("Send failed: ${sendRes.desc}");
-      }
-    } else {
-      _addLog("Failed to create message: ${createRes.desc}");
+      setState(() => _status = "Error: $e");
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Tencent IM Standalone Test"),
-        backgroundColor: Colors.indigo,
-      ),
+      appBar: AppBar(title: const Text("KatsKlub Chat")),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (!isLoggedIn) ...[
-              TextField(
-                controller: _myUserIdController,
-                decoration: const InputDecoration(
-                  labelText: "Your User ID (from your DB)",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: isSdkInited ? _login : null,
-                style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                child: const Text("Log In to Chat"),
-              ),
-            ] else ...[
-              TextField(
-                controller: _targetUserIdController,
-                decoration: const InputDecoration(
-                  labelText: "Send to (Target User ID)",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        labelText: "Type message...",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    color: Colors.indigo,
-                    onPressed: _sendMessage,
-                  ),
-                ],
-              ),
-            ],
-            const Divider(height: 30),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Logs & Incoming Messages:", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black87,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ListView.builder(
-                  itemCount: logs.length,
-                  itemBuilder: (context, i) => Text(
-                    logs[i],
-                    style: const TextStyle(color: Colors.greenAccent, fontSize: 13),
-                  ),
-                ),
+            TextField(
+              controller: _idController,
+              decoration: const InputDecoration(
+                labelText: "User ID (e.g. user1, user2)",
+                border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _login,
+                child: _loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Open Chat"),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(_status, style: const TextStyle(color: Colors.grey)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ConversationListScreen extends StatelessWidget {
+  final String currentUserId;
+  const ConversationListScreen({super.key, required this.currentUserId});
+
+  void _startDirectChat(BuildContext context) {
+    final targetController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("New Chat"),
+        content: TextField(
+          controller: targetController,
+          decoration: const InputDecoration(labelText: "Target User ID"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final target = targetController.text.trim();
+              if (target.isNotEmpty) {
+                Navigator.pop(ctx);
+                final conv = V2TimConversation(
+                  conversationID: "c2c_$target",
+                  type: 1,
+                  userID: target,
+                  showName: target,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatRoomScreen(conversation: conv),
+                  ),
+                );
+              }
+            },
+            child: const Text("Start"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Chats ($currentUserId)"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await TIMUIKitCore.getInstance().logout();
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TencentLoginScreen()),
+                );
+              }
+            },
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _startDirectChat(context),
+        child: const Icon(Icons.message),
+      ),
+      body: TIMUIKitConversation(
+        onTapItem: (conv) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatRoomScreen(conversation: conv),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ChatRoomScreen extends StatelessWidget {
+  final V2TimConversation conversation;
+  const ChatRoomScreen({super.key, required this.conversation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(conversation.showName ?? conversation.userID ?? "Chat")),
+      body: TIMUIKitChat(
+        conversation: conversation,
       ),
     );
   }
