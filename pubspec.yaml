@@ -13,6 +13,7 @@ dependencies:
   tencent_cloud_chat_sdk: ^8.6.7019+2
   tencent_calls_uikit: ^2.5.0
   http: ^1.2.0
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
