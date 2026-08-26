@@ -81,12 +81,16 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
   }
 
   Future<void> _initTUIKit() async {
-    await TIMUIKitCore.getInstance().init(
-      sdkAppID: sdkAppId,
-      loglevel: LogLevelEnum.V2TIM_LOG_DEBUG,
-      listener: V2TimSDKListener(),
-      onTUIKitCallbackListener: (dynamic callback) {},
-    );
+    try {
+      await TIMUIKitCore.getInstance().init(
+        sdkAppID: sdkAppId,
+        loglevel: LogLevelEnum.V2TIM_LOG_DEBUG,
+        listener: V2TimSDKListener(),
+        onTUIKitCallbackListener: (dynamic callback) {},
+      );
+    } catch (e) {
+      debugPrint("TUIKit init warning: $e");
+    }
   }
 
   Future<void> _login() async {
