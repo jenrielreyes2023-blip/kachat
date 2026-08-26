@@ -90,7 +90,7 @@ class KatsKlubApp extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           centerTitle: false,
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: Colors.white,
           elevation: 0,
           margin: EdgeInsets.zero,
@@ -123,12 +123,12 @@ class KatsKlubApp extends StatelessWidget {
           elevation: 0,
           height: 74,
           indicatorColor: softViolet,
-          labelTextStyle: MaterialStateProperty.all(
+          labelTextStyle: WidgetStateProperty.all(
             const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
           ),
-          iconTheme: MaterialStateProperty.resolveWith(
+          iconTheme: WidgetStateProperty.resolveWith(
             (states) => IconThemeData(
-              color: states.contains(MaterialState.selected) ? violet : mutedInk,
+              color: states.contains(WidgetState.selected) ? violet : mutedInk,
               size: 22,
             ),
           ),
@@ -907,7 +907,7 @@ class ProfileTab extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.18)),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0x2EFFFFFF)),
                     child: _Avatar(imageUrl: avatarUrl, fallback: displayName, radius: 42, backgroundColor: const Color(0xFFFFE0D6)),
                   ),
                   const SizedBox(height: 16),
@@ -917,7 +917,7 @@ class ProfileTab extends StatelessWidget {
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(99)),
+                    decoration: BoxDecoration(color: const Color(0x1AFFFFFF), borderRadius: BorderRadius.circular(99)),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -968,7 +968,7 @@ class ModernChatRoomScreen extends StatelessWidget {
     return TIMUIKitTheme(
       theme: const TUITheme(
         primaryColor: violet,
-        secondaryColor: const Color(0xFF5A48D5),
+        secondaryColor: Color(0xFF5A48D5),
         chatMessageItemFromSelfBgColor: violet,
         chatMessageItemFromOthersBgColor: Colors.white,
         chatBgColor: paper,
