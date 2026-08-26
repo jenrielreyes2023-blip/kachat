@@ -35,11 +35,17 @@ jobs:
         run: |
           find /home/runner/.pub-cache -name "video_screen.dart" -exec sed -i 's/TIMUIKITMessageItem/TIMUIKitMessageItem/g' {} + || true
 
-      - name: Build APK
-        run: flutter build apk --release --no-tree-shake-icons
+      - name: Build Split APKs
+        run: flutter build apk --release --split-per-abi --no-tree-shake-icons
 
-      - name: Upload APK Artifact
+      - name: Upload arm64-v8a APK (Primary for modern phones)
         uses: actions/upload-artifact@v4
         with:
-          name: kachat-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: kachat-arm64-v8a-release
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+
+      - name: Upload All Split APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: kachat-all-split-apks
+          path: build/app/outputs/flutter-apk/app-*-release.apk
