@@ -969,6 +969,7 @@ class ModernChatRoomScreen extends StatelessWidget {
       theme: const TUITheme(
         primaryColor: violet,
         secondaryColor: Color(0xFF5A48D5),
+        chatMessageItemTextColor: ink,
         chatMessageItemFromSelfBgColor: violet,
         chatMessageItemFromOthersBgColor: Colors.white,
         chatBgColor: paper,
@@ -977,6 +978,15 @@ class ModernChatRoomScreen extends StatelessWidget {
         backgroundColor: paper,
         body: TIMUIKitChat(
           conversation: conversation,
+          messageItemBuilder: MessageItemBuilder(
+            messageRowBuilder: (message, messageWidget, onScrollToIndex, isNeedShowJumpStatus, clearJumpStatus, onScrollToIndexBegin) {
+              if (message.isSelf != true) return null;
+              return DefaultTextStyle.merge(
+                style: const TextStyle(color: Colors.white),
+                child: messageWidget,
+              );
+            },
+          ),
           config: const TIMUIKitChatConfig(isShowAvatar: true, isAllowClickAvatar: true, isShowReadingStatus: false),
           appBarConfig: AppBar(
             backgroundColor: paper,
