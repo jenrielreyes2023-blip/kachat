@@ -25,11 +25,15 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.24.5'
           cache: true
 
       - name: Get Dependencies
         run: flutter pub get
+
+      - name: Patch Linux case-sensitivity in pub cache
+        run: |
+          find /home/runner/.pub-cache -name "video_screen.dart" -exec sed -i 's/TIMUIKITMessageItem/TIMUIKitMessageItem/g' {} + || true
 
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
