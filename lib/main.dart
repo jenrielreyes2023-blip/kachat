@@ -12,37 +12,37 @@ import "package:tencent_cloud_chat_uikit/theme/tui_theme.dart";
 const int sdkAppId = 20046974;
 const String tokenApiUrl = "https://katsklub.top/api/chat/token";
 
-// Modern Brand Theme Palette (Royal Indigo / Deep Purple & Neutral Light Grays)
+// Modern Brand Theme Palette (Indigo/Purple #6366F1 & Neutral Light Grays #F3F4F6 / #F9FAFB)
 const TUITheme customTUITheme = TUITheme(
-  primaryColor: Color(0xFF4F46E5), // Royal Indigo Brand
-  secondaryColor: Color(0xFF6366F1),
+  primaryColor: Color(0xFF6366F1), // Primary brand color (#6366F1)
+  secondaryColor: Color(0xFF4F46E5),
   lightPrimaryColor: Color(0xFF818CF8),
-  appbarBgColor: Color(0xFF4F46E5),
+  appbarBgColor: Color(0xFF6366F1),
   appbarTextColor: Colors.white,
-  chatHeaderBgColor: Color(0xFF4F46E5),
+  chatHeaderBgColor: Color(0xFF6366F1),
   chatHeaderTitleTextColor: Colors.white,
   chatHeaderBackTextColor: Colors.white,
   chatHeaderActionTextColor: Colors.white,
-  chatBgColor: Color(0xFFF8FAFC),
-  // Sent bubble: Custom brand Deep Purple / Royal Blue
-  chatMessageItemFromSelfBgColor: Color(0xFF4F46E5),
-  // Received bubble: Neutral soft light-gray card
-  chatMessageItemFromOthersBgColor: Color(0xFFF1F5F9),
-  // High contrast readability text colors
-  chatMessageItemTextColor: Color(0xFF0F172A),
+  chatBgColor: Color(0xFFF9FAFB), // Pure / soft off-white background
+  // Sent bubble: Primary color (#6366F1)
+  chatMessageItemFromSelfBgColor: Color(0xFF6366F1),
+  // Received bubble: Neutral soft light-gray card (#F3F4F6)
+  chatMessageItemFromOthersBgColor: Color(0xFFF3F4F6),
+  // High contrast readability text colors: dark slate (#1F2937)
+  chatMessageItemTextColor: Color(0xFF1F2937),
   conversationItemBgColor: Colors.white,
   conversationItemActiveBgColor: Color(0xFFEEF2FF),
-  conversationItemTitleTextColor: Color(0xFF0F172A),
-  conversationItemLastMessageTextColor: Color(0xFF64748B),
-  conversationItemTitmeTextColor: Color(0xFF94A3B8),
-  conversationItemBorderColor: Color(0xFFE2E8F0),
-  inputFillColor: Color(0xFFF1F5F9),
-  weakBackgroundColor: Color(0xFFF8FAFC),
-  weakDividerColor: Color(0xFFE2E8F0),
-  weakTextColor: Color(0xFF64748B),
-  darkTextColor: Color(0xFF1E293B),
+  conversationItemTitleTextColor: Color(0xFF1F2937),
+  conversationItemLastMessageTextColor: Color(0xFF6B7280),
+  conversationItemTitmeTextColor: Color(0xFF9CA3AF),
+  conversationItemBorderColor: Color(0xFFE5E7EB),
+  inputFillColor: Color(0xFFF3F4F6),
+  weakBackgroundColor: Color(0xFFF9FAFB),
+  weakDividerColor: Color(0xFFE5E7EB),
+  weakTextColor: Color(0xFF6B7280),
+  darkTextColor: Color(0xFF1F2937),
   white: Colors.white,
-  black: Color(0xFF0F172A),
+  black: Color(0xFF111827),
 );
 
 /// Custom Theme Provider Widget wrapping TUIKit screens
@@ -71,14 +71,14 @@ void main() {
     theme: ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4F46E5),
-        primary: const Color(0xFF4F46E5),
-        surface: const Color(0xFFF8FAFC),
+        seedColor: const Color(0xFF6366F1),
+        primary: const Color(0xFF6366F1),
+        surface: const Color(0xFFF9FAFB),
       ),
-      scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+      scaffoldBackgroundColor: const Color(0xFFF9FAFB),
       appBarTheme: const AppBarTheme(
         elevation: 0,
-        backgroundColor: Color(0xFF4F46E5),
+        backgroundColor: Color(0xFF6366F1),
         foregroundColor: Colors.white,
         centerTitle: false,
       ),
@@ -185,7 +185,7 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
           padding: const EdgeInsets.all(24.0),
           child: Card(
             elevation: 8,
-            shadowColor: const Color(0x334F46E5),
+            shadowColor: const Color(0x336366F1),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 36.0),
@@ -203,7 +203,7 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
                     child: const Icon(
                       Icons.chat_bubble_rounded,
                       size: 38,
-                      color: Color(0xFF4F46E5),
+                      color: Color(0xFF6366F1),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -220,7 +220,7 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
                   TextField(
                     controller: _idController,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF4F46E5)),
+                      prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF6366F1)),
                       labelText: "User ID (e.g. admin, user1, user2)",
                       hintText: "Enter user ID or username",
                       filled: true,
@@ -235,7 +235,7 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
                       ),
                     ),
                   ),
@@ -245,7 +245,7 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
                     height: 52,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4F46E5),
+                        backgroundColor: const Color(0xFF6366F1),
                         foregroundColor: Colors.white,
                         elevation: 2,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -293,7 +293,7 @@ class ConversationListScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: const Row(
           children: [
-            Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF4F46E5)),
+            Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF6366F1)),
             SizedBox(width: 8),
             Text("New Chat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           ],
@@ -315,7 +315,7 @@ class ConversationListScreen extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4F46E5),
+              backgroundColor: const Color(0xFF6366F1),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
@@ -349,10 +349,10 @@ class ConversationListScreen extends StatelessWidget {
     return TIMUIKitTheme(
       theme: customTUITheme,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: const Color(0xFFF9FAFB),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color(0xFF4F46E5),
+          backgroundColor: const Color(0xFF6366F1),
           foregroundColor: Colors.white,
           title: Text(
             "Chats ($nickName)",
@@ -375,7 +375,7 @@ class ConversationListScreen extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: const Color(0xFF4F46E5),
+          backgroundColor: const Color(0xFF6366F1),
           foregroundColor: Colors.white,
           elevation: 4,
           onPressed: () => _startDirectChat(context),
@@ -415,7 +415,7 @@ class ChatRoomScreen extends StatelessWidget {
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: 14,
         ),
       ),
     );
@@ -423,112 +423,105 @@ class ChatRoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleName = conversation.showName ?? conversation.userID ?? "Chat";
-
     return TIMUIKitTheme(
       theme: customTUITheme,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: const Color(0xFF4F46E5),
-          foregroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-            tooltip: "Back",
-            onPressed: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            },
-          ),
-          titleSpacing: 0,
-          title: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-                child: ClipOval(
-                  child: (conversation.faceUrl != null && conversation.faceUrl!.isNotEmpty)
-                      ? Image.network(
-                          conversation.faceUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(titleName),
-                        )
-                      : _buildAvatarPlaceholder(titleName),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  titleName,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+      // No outer Scaffold appBar to eliminate duplicate headers completely
+      child: TIMUIKitChat(
+        conversation: conversation,
+        config: const TIMUIKitChatConfig(
+          isShowAvatar: true,
+          isShowReadingStatus: false, // Prevents raw Read/Unread text clutter
+          isShowSelfNameInGroup: false,
+          isShowOthersNameInGroup: true,
+          showC2cMessageEditStatus: false,
+          isAllowShowMorePanel: true,
+          isAllowEmojiPanel: true,
+          isAllowSoundMessage: true,
+          urlPreviewType: UrlPreviewType.previewCardAndHyperlink,
         ),
-        body: TIMUIKitChat(
-          conversation: conversation,
-          config: const TIMUIKitChatConfig(
-            isAllowShowMorePanel: true,
-            isAllowEmojiPanel: true,
-            isAllowSoundMessage: true,
-            isShowAvatar: true,
-            isShowReadingStatus: true,
-            showC2cMessageEditStatus: true,
-          ),
-          morePanelConfig: MorePanelConfig(
-            showGalleryPickAction: true,
-            showCameraAction: true,
-            showFilePickAction: true,
-            showVoiceCall: false,
-            showVideoCall: false,
-          ),
-          userAvatarBuilder: (context, message) {
-            final faceUrl = message.faceUrl ?? "";
-            final name = message.nickName ?? message.sender ?? message.userID ?? "?";
-            final isSelf = message.isSelf ?? false;
-
+        morePanelConfig: MorePanelConfig(
+          showGalleryPickAction: true,
+          showCameraAction: true,
+          showFilePickAction: true,
+          showVoiceCall: false,
+          showVideoCall: false,
+        ),
+        messageItemBuilder: MessageItemBuilder(
+          textMessageItemBuilder: (message, isShowJump, clearJump) {
+            final isFromSelf = message.isSelf ?? false;
+            final text = message.textElem?.text ?? "";
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 40,
-              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelf ? const Color(0xFF818CF8) : const Color(0xFFCBD5E1),
-                  width: 2,
+                color: isFromSelf ? const Color(0xFF6366F1) : const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(isFromSelf ? 18 : 4),
+                  bottomRight: Radius.circular(isFromSelf ? 4 : 18),
                 ),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x0F000000),
+                    color: isFromSelf ? const Color(0x296366F1) : const Color(0x0A000000),
                     blurRadius: 4,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 1.5),
                   ),
                 ],
               ),
-              child: ClipOval(
-                child: faceUrl.isNotEmpty
-                    ? Image.network(
-                        faceUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(name),
-                      )
-                    : _buildAvatarPlaceholder(name),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.72,
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: isFromSelf ? Colors.white : const Color(0xFF1F2937),
+                  fontSize: 15,
+                  height: 1.35,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             );
           },
         ),
+        userAvatarBuilder: (context, message) {
+          final isSelf = message.isSelf ?? false;
+          // Hide avatar on sent messages (current user) to keep right side clean
+          if (isSelf) {
+            return const SizedBox.shrink();
+          }
+
+          final faceUrl = message.faceUrl ?? "";
+          final name = message.nickName ?? message.sender ?? message.userID ?? "?";
+
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFFE5E7EB),
+                width: 1.5,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A000000),
+                  blurRadius: 3,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: faceUrl.isNotEmpty
+                  ? Image.network(
+                      faceUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(name),
+                    )
+                  : _buildAvatarPlaceholder(name),
+            ),
+          );
+        },
       ),
     );
   }
