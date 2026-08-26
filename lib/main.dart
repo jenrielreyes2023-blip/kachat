@@ -4,6 +4,8 @@ import "package:http/http.dart" as http;
 import "package:tencent_cloud_chat_sdk/enum/log_level_enum.dart";
 import "package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart";
 import "package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart";
+import "package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart";
+import "package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart";
 import "package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart";
 
 const int sdkAppId = 20046974;
@@ -62,6 +64,8 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
 
       final data = jsonDecode(res.body);
       final userSig = data["userSig"] as String?;
+      final nickName = (data["nickName"] as String?) ?? userId;
+      final avatarUrl = (data["avatarUrl"] as String?) ?? "";
 
       if (userSig != null && userSig.isNotEmpty) {
         setState(() => _status = "Logging in to TUIKit...");
@@ -72,12 +76,24 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
         );
 
         if (loginRes.code == 0 && mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ConversationListScreen(currentUserId: userId),
+          await TencentImSDKPlugin.v2TIMManager.setSelfInfo(
+            userFullInfo: V2TimUserFullInfo(
+              nickName: nickName,
+              faceUrl: avatarUrl,
             ),
           );
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ConversationListScreen(
+                  currentUserId: userId,
+                  nickName: nickName,
+                ),
+              ),
+            );
+          }
         } else {
           setState(() => _status = "Login failed: ${loginRes.desc}");
         }
@@ -158,7 +174,12 @@ class _TencentLoginScreenState extends State<TencentLoginScreen> {
 
 class ConversationListScreen extends StatelessWidget {
   final String currentUserId;
-  const ConversationListScreen({super.key, required this.currentUserId});
+  final String nickName;
+  const ConversationListScreen({
+    super.key,
+    required this.currentUserId,
+    required this.nickName,
+  });
 
   void _startDirectChat(BuildContext context) {
     final targetController = TextEditingController();
@@ -208,7 +229,7 @@ class ConversationListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chats ($currentUserId)"),
+        title: Text("Chats ($nickName)"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
